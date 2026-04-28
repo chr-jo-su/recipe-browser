@@ -1,0 +1,11 @@
+.env
+.DS_Store
+/node_modules
+/scripts
+remote-start.sh
+local-start.sh
+milestone 2.pdf
+milestone 3.pdf
+milestone 4.pdf
+milestone1.pdf
+timelinedraft.png

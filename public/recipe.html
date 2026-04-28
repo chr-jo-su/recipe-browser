@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Recipe</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+  <div class="page-shell-recipe">
+
+    
+    <button id="delete-recipe-btn" type="button">Delete</button>
+    <button id="update-recipe-btn" type="button">Update</button>
+    <button id="save-recipe-btn" type="button">Save</button>
+
+    <section id="update-panel" class="panel bottom-create">
+      <h3>Update</h3>
+      <input id="create-recipe-name" type="text" placeholder="Recipe Title">
+      <section class="panel ingredient-search">
+        <form id="addIngredient" class="ingredient-search-panel">
+          <input id="search-query-ingredient" type="text" placeholder="Ingredient name">
+          <input id="ingredient-amount-descrip" type="text" placeholder="Amount of ingredient (e.g, '2 cups')">
+          <button type="add-ingredient">Add</button>
+        </form>
+
+        <section class="ingredient-search-panel bottom">
+          <h4>Included Ingredients:</h4>
+          <ul id="included-ingredients-list"></ul>
+        </section>
+
+      </section>
+
+
+      <div class="recipe-meta-row">
+        <input id="cuisine-name" type="text" placeholder="Name of cuisine">
+        <input id="num-servings" type="text" placeholder="Number of servings">
+        <input id="time-estimate" type="text" placeholder="Preparation time (in minutes)">
+      </div>
+
+      <form id="submitRecipe">
+        <textarea id="recipe-description" placeholder="Instructions" rows="4"></textarea>
+        <button type="submit">Submit</button>
+      </form>
+
+    </section>
+
+    <section class="panel full-recipe">
+      <h1>Recipe Title</h1>
+
+      <p>description</p>
+      <h3>Ingredients</h3>
+      <ul id="ingredients-list"></ul>
+
+      <h3>Steps</h3>
+      <p>Instructions here</p>
+    </section>
+
+    <section class="panel reviews">
+      <h3> Reviews </h3>
+      <form id="review-form" class="review-input-row">
+        <input id="rating-input" type="text" placeholder="Rating out of 5">
+        <input id="review-input" type="text" placeholder="Comment">
+        <button type="update">Submit</button>
+      </form>
+
+
+      <p>Average rating: </p>
+
+      <div class="recipe-meta-row">
+        <button id="highlight-experts" type="button">Highlight experts (reviewed every recipe within this cuisine)</button>
+      </div>
+      
+      <ul id="reviews-list">
+        <!-- <li>
+          <h4>Test</h4>
+          <p>Rating: 1.5/5</p>
+          <p>Good</p>
+        </li>
+        <li>
+          <h4>Test</h4>
+          <p>Rating: 1.5/5</p>
+          <p>Good</p>
+        </li> -->
+      </ul>
+    </section>
+  </div>
+
+  <script src="recipeScript.js" async defer></script>
+</body>
+
+</html>

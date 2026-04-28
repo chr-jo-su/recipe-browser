@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div class="panel recipe-meta-row">
+        <button id="toggle-recipeID" type="button">Add recipeID</button>
+        <button id="toggle-cuisine" type="button">Add cuisine</button>
+        <button id="toggle-time" type="button">Add time</button>
+        <button id="toggle-servings" type="button">Add servings</button>
+        <button id="toggle-title" type="button">Add title</button>
+        <button id="clear-attributes" type="button">Clear</button>
+    </div>
+    <p id="projected-attributes">Current projected attributes:</p>
+
+    <table id="recipe-table">
+      <thead>
+        <tr>
+          <!-- <th>Recipe ID</th>
+          <th>Cuisine</th>
+          <th>Time</th>
+          <th>Servings</th>
+          <th>Title</th> -->
+        </tr>
+      </thead>
+      <tbody id="recipe-table-body"></tbody>
+    </table>
+    <script src="allrecipes.js" async defer></script>
+  </body>
+</html>

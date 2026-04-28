@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Recipe Browser</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+  <h1 class="page-title">Recipe Browser</h1>
+
+  <div class="page-shell">
+    <form id="login" class="top-strip">
+      <input id="username" type="text" placeholder="Username">
+      <input id="password" type="text" placeholder="Password">
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="page-layout">
+      <section class="panel top-left">
+        <h3>Recommended</h3>
+        <div id="recommended"></div>
+        <button id="refresh-recommended-btn" type="button">Refresh</button>
+      </section>
+
+      <section class="panel top-middle">
+        <h3>Saved</h3>
+        <div id="saved"></div>
+      </section>
+
+      <section class="panel top-right">
+        <h3>Created</h3>
+        <div id="created"></div>
+      </section>
+
+      <section class="panel bottom-search">
+        <form id="searchRecipes" class="search-panel">
+          <h3>Search for Recipes</h3>
+          <div class="search-row">
+            <input id="search-query" type="text" placeholder="Search">
+            <button type="submit">Search</button>
+          </div>
+
+          <section class="panel ingredient-search">
+            <div class="ingredient-search-panel">
+              <select id="search-condition-clause">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+              </select>
+              <select id="search-condition-attribute">
+                <option value="TimeEstimate">TimeEstimate</option>
+                <option value="Servings">Servings</option>
+                <option value="CName">Cuisine</option>
+              </select>
+              <select id="search-condition-op">
+                <option value="&lt;">&lt;</option>
+                <option value="&gt;">&gt;</option>
+                <option value="=">=</option>
+              </select>
+              <input id="search-condition-value" type="text" placeholder="Value">
+              <button id="add-select" type="button">Add</button>
+            </div>
+            <section class="ingredient-search-panel bottom">
+              <h4>Added conditions:</h4>
+              <ul id="search-conditions-list"></ul>
+            </section>
+          </section>
+
+          <section class="panel ingredient-filter">
+            <div class="ingredient-filter-panel">
+              <select id="ingredient-filter">
+                <option value="Cont">Contains</option>
+                <option value="DNCont">Does not contain</option>
+              </select>
+              <input id="ingredient-name" type="text" placeholder="Ingredient name">
+              <button id="add-filter" type="button">Add</button>
+            </div>
+            <section class="ingredient-filter-panel bottom">
+              <h4>Added filters:</h4>
+              <ul id="search-filters-list"></ul>
+            </section>
+          </section>
+          
+          <div class="filter-group">
+          <label><input type="checkbox" name="only-top-cuisine" value="include-top-cuisine"> Only include recipes from top rated cuisine (overrides search conditions)</label>
+          </div> 
+         
+          <div id="search-results"></div>
+
+          <button id="recipe-project" type="button">Show all recipes</button>
+        </form>
+      </section>
+
+      <section class="panel bottom-create">
+        <h3>Create</h3>
+        <input id="create-recipe-name" type="text" placeholder="Recipe Title">
+        <section class="panel ingredient-search">
+          <form id="addIngredient" class="ingredient-search-panel">
+            <input id="search-query-ingredient" type="text" placeholder="Ingredient name">
+            <input id="ingredient-amount-descrip" type="text" placeholder="Amount of ingredient (e.g, '2 cups')">
+            <button type="add-ingredient">Add</button>
+          </form>
+
+          <section class="ingredient-search-panel bottom">
+            <h4>Included Ingredients:</h4>
+            <ul id="included-ingredients-list"></ul>
+          </section>
+
+        </section>
+
+
+        <div class="recipe-meta-row">
+          <input id="cuisine-name" type="text" placeholder="Name of cuisine">
+          <input id="num-servings" type="text" placeholder="Number of servings">
+          <input id="time-estimate" type="text" placeholder="Preparation time (in minutes)">
+        </div>
+
+        <form id="submitRecipe">
+          <textarea id="recipe-description" placeholder="Instructions" rows="4"></textarea>
+          <button type="submit">Submit</button>
+        </form>
+
+
+      </section>
+    </div>
+
+  </div>
+
+  <script src="scripts.js" async defer></script>
+</body>
+
+</html>
