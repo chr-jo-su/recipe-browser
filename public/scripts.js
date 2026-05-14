@@ -1,6 +1,4 @@
 const includedIngredients = [];
-// const ingredientNames = [];
-// const ingredientAmounts = [];
 
 const addedClauses = [];
 const addedPredicates = [];
@@ -98,10 +96,6 @@ function renderRecipeCards(containerId, recipes, recipeIdIndex) {
 }
 
 function removeIngredientAt(index) {
-  /* includedIngredients.splice(index, 1);
-  ingredientNames.splice(index, 1);
-  ingredientAmounts.splice(index, 1); */
-  
   includedIngredients.splice(index, 1);
   renderIncludedIngredients();
 }
@@ -398,9 +392,6 @@ async function addIngredient() {
 
 
   const label = amount ? '- ' + amount + ' of ' + ingredientName : ingredientName;
-  // includedIngredients.push(label);
-  // ingredientNames.push(capitalizeFirstOnly(ingredientName));
-  // ingredientAmounts.push(amount);
 
   includedIngredients.push({label: label, name: capitalizeFirstOnly(ingredientName), amount: amount});
 
