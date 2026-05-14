@@ -1,6 +1,6 @@
 const includedIngredients = [];
-const ingredientNames = [];
-const ingredientAmounts = [];
+// const ingredientNames = [];
+// const ingredientAmounts = [];
 
 const addedClauses = [];
 const addedPredicates = [];
@@ -75,10 +75,34 @@ function renderIncludedFilters() {
   });
 }
 
+function renderRecipeCards(containerId, recipes, recipeIdIndex) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  for (const recipe of recipes) {
+    const recipeId = recipe[recipeIdIndex];
+    const title = recipe[4 + recipeIdIndex]; // hacky solution to inconsistent indices of recipe attributes
+    const card = document.createElement('div');
+
+    card.className = 'recommended-item';
+    card.style.cursor = 'pointer';
+    card.style.textDecoration = 'underline';
+    card.style.color = '#007bff';
+    card.style.textDecorationColor = '#007bff';
+    card.innerHTML =  '<p>- ' + title + '</p>';
+    card.addEventListener('click', function() {
+      window.location.href = 'recipe.html?recipeID=' + recipeId;
+    });
+    container.appendChild(card);
+  }
+}
+
 function removeIngredientAt(index) {
-  includedIngredients.splice(index, 1);
+  /* includedIngredients.splice(index, 1);
   ingredientNames.splice(index, 1);
-  ingredientAmounts.splice(index, 1);
+  ingredientAmounts.splice(index, 1); */
+  
+  includedIngredients.splice(index, 1);
   renderIncludedIngredients();
 }
 
@@ -90,7 +114,7 @@ function renderIncludedIngredients() {
     const li = document.createElement('li');
     
     const text = document.createElement('span');
-    text.textContent = item;
+    text.textContent = item.label;
 
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
@@ -118,29 +142,8 @@ async function refreshLists() {
     alert('Failed to load recommended recipes');
     return;
   }
-  
-  let container = document.getElementById('recommended');
-  container.innerHTML = ''
 
-  for (const recipe of responseData.recipes) {
-    const recipeId = recipe[0];
-    const cuisine = recipe[1];
-    const timeEstimate = recipe[2];
-    const servings = recipe[3];
-    const title = recipe[4];
-
-    const card = document.createElement('div');
-    card.className = 'recommended-item';
-    card.style.cursor = 'pointer';
-    card.style.textDecoration = 'underline';
-    card.style.color = '#007bff';
-    card.style.textDecorationColor = '#007bff';
-    card.innerHTML =  '<p>- ' + title + '</p>';
-    card.addEventListener('click', function() {
-      window.location.href = 'recipe.html?recipeID=' + recipeId;
-    });
-    container.appendChild(card);
-  }
+  renderRecipeCards('recommended', responseData.recipes, 0);
 
   if (sessionStorage.getItem('userLoggedIn') === 'true') {
     // TODO:
@@ -165,28 +168,7 @@ async function refreshLists() {
       return;
     }
 
-    container = document.getElementById('created');
-    container.innerHTML = '';
-
-    for (const recipe of responseData.recipes) {
-      const recipeId = recipe[1];
-      const cuisine = recipe[2];
-      const timeEstimate = recipe[3];
-      const servings = recipe[4];
-      const title = recipe[5];
-
-      const card = document.createElement('div');
-      card.className = 'recommended-item';
-      card.style.cursor = 'pointer';
-      card.style.textDecoration = 'underline';
-      card.style.color = '#007bff';
-      card.style.textDecorationColor = '#007bff';
-      card.innerHTML =  '<p>- ' + title + '</p>';
-      card.addEventListener('click', function() {
-        window.location.href = 'recipe.html?recipeID=' + recipeId;
-      });
-      container.appendChild(card);
-    }
+    renderRecipeCards('created', responseData.recipes, 1);
 
     response = await fetch('/join-saved-recipes', {
       method: 'POST',
@@ -208,28 +190,7 @@ async function refreshLists() {
       return;
     }
 
-    container = document.getElementById('saved');
-    container.innerHTML = '';
-
-    for (const recipe of responseData.savedRecipes) {
-      const recipeId = recipe[0];
-      const cuisine = recipe[1];
-      const timeEstimate = recipe[2];
-      const servings = recipe[3];
-      const title = recipe[4];
-
-      const card = document.createElement('div');
-      card.className = 'recommended-item';
-      card.style.cursor = 'pointer';
-      card.style.textDecoration = 'underline';
-      card.style.color = '#007bff';
-      card.style.textDecorationColor = '#007bff';
-      card.innerHTML =  '<p>- ' + title + '</p>';
-      card.addEventListener('click', function() {
-        window.location.href = 'recipe.html?recipeID=' + recipeId;
-      });
-      container.appendChild(card);
-    }
+    renderRecipeCards('saved', responseData.savedRecipes, 0); 
   }
 }
 
@@ -272,13 +233,10 @@ async function submitRecipe() {
     return;
   }
 
-  if (ingredientNames.length === 0) {
+  if (includedIngredients.length === 0) {
     alert('At least one ingredient must be included before submitting');
     return;
   }
-
-  // console.log(title);
-  // console.log(instructions);
 
   const response = await fetch('/submit-recipe', {
     method: 'POST',
@@ -292,8 +250,8 @@ async function submitRecipe() {
       servings: numOfServings,
       title: recipeTitle,
       instructions: instructions,
-      ingredients: ingredientNames,
-      ingredientAmounts: ingredientAmounts
+      ingredients: includedIngredients.map(item => item.name),
+      ingredientAmounts: includedIngredients.map(item => item.amount)
     })
   });
 
@@ -326,9 +284,6 @@ async function submitRecipe() {
 
     renderIncludedIngredients();
     refreshLists();
-
-    // test -- open recipe page for this new recipe
-    // window.location.href = 'recipe.html?recipeID=' + recipeID;
 
   } else {
     alert('Error submitting recipe, please try again.');
@@ -387,29 +342,8 @@ async function searchRecipes() {
     alert('No recipes with the given search conditions could be found');
     return;
   }
-
-  const container = document.getElementById('search-results');
-  container.innerHTML = '';
-
-  for (const recipe of responseData.recipes) {
-      const recipeId = recipe[0];
-      const cuisine = recipe[1];
-      const timeEstimate = recipe[2];
-      const servings = recipe[3];
-      const title = recipe[4];
-
-      const card = document.createElement('div');
-      card.className = 'recommended-item';
-      card.style.cursor = 'pointer';
-      card.style.textDecoration = 'underline';
-      card.style.color = '#007bff';
-      card.style.textDecorationColor = '#007bff';
-      card.innerHTML =  '<p>- ' + title + '</p>';
-      card.addEventListener('click', function() {
-        window.location.href = 'recipe.html?recipeID=' + recipeId;
-      });
-      container.appendChild(card);
-    }
+   
+  renderRecipeCards('search-results', responseData.recipes, 0); 
 }
 
 async function tryLogin() {
@@ -464,9 +398,11 @@ async function addIngredient() {
 
 
   const label = amount ? '- ' + amount + ' of ' + ingredientName : ingredientName;
-  includedIngredients.push(label);
-  ingredientNames.push(capitalizeFirstOnly(ingredientName));
-  ingredientAmounts.push(amount);
+  // includedIngredients.push(label);
+  // ingredientNames.push(capitalizeFirstOnly(ingredientName));
+  // ingredientAmounts.push(amount);
+
+  includedIngredients.push({label: label, name: capitalizeFirstOnly(ingredientName), amount: amount});
 
   renderIncludedIngredients();
 

@@ -124,7 +124,7 @@ textarea::placeholder {
 
 .bottom-create {
     grid-column: 1/ -1;
-    min-height: 20vh;
+    min-height: auto;
     gap: 0.75rem;
 }
 
@@ -185,6 +185,7 @@ textarea::placeholder {
     border: 1px solid #ccc;
     display: flex;
     flex-direction: column;
+    gap: 1rem;
 }
 
 .search-row {
@@ -231,6 +232,12 @@ textarea::placeholder {
     align-items: center;
 }
 
+#submitRecipe {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 #included-ingredients-list,
 #search-conditions-list {
     margin-top: 0;
@@ -257,8 +264,8 @@ textarea::placeholder {
     width: 100%;
     box-sizing: border-box;
     resize: none;
-    flex: 1;
-    height: 100%;
+    flex: none;
+    height: auto;
 }
 
 .full-recipe {

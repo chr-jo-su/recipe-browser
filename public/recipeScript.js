@@ -64,11 +64,6 @@ function addIngredientWithoutParams() {
 }
 
 function addIngredient(ingredientName, amount) {
-  // event.preventDefault();
-
-  // const ingredientName = document.getElementById('search-query-ingredient').value.trim();
-  // const amount = document.getElementById('ingredient-amount-descrip').value.trim();
-
   if (ingredientName === '' || amount === '') {
     alert('Invalid ingredient name or amount entered.');
     return;
@@ -389,9 +384,6 @@ async function submitRecipe() {
     return;
   }
 
-  // console.log(title);
-  // console.log(instructions);
-
   const response = await fetch('/update-recipe', {
     method: 'POST',
     headers: {
@@ -411,35 +403,8 @@ async function submitRecipe() {
 
   const responseData = await response.json();
 
-  // const nextResponse = await fetch('/insert-creates', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   },
-  //   body: JSON.stringify({
-  //     userName: sessionStorage.getItem('username'),
-  //     recID: recipeID
-  //   })
-  // });
-
-  // const nextResponseData = await nextResponse.json()
-
   if (responseData.success) {
     alert('Recipe submitted.');
-
-    // document.getElementById('create-recipe-name').value = '';
-    // document.getElementById('recipe-description').value = '';
-    // document.getElementById('cuisine-name').value = '';
-    // document.getElementById('time-estimate').value = '';
-    // document.getElementById('num-servings').value = '';
-    // includedIngredients.length = 0;
-    // ingredientAmounts.length = 0;
-    // ingredientNames.length = 0;
-
-    // renderIncludedIngredients();
-
-    // test -- open recipe page for this new recipe
-    // window.location.href = 'recipe.html?recipeID=' + recipeID;
 
     window.location.reload();
 
@@ -511,8 +476,6 @@ async function initRecipePage() {
   const isLoggedIn = sessionStorage.getItem('userLoggedIn') === 'true';
 
   if (isLoggedIn) {
-    alert('Logged in as ' + sessionStorage.getItem('username'));
-
     const response = await fetch('/user-created-recipe', {
       method: 'POST',
       headers: {
