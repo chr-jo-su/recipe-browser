@@ -17,26 +17,26 @@ router.get('/check-db-connection', async (req, res) => {
 
 router.get('/demotable', async (req, res) => {
     const tableContent = await appService.fetchDemotableFromDb();
-    res.json({data: tableContent});
+    res.json({ data: tableContent });
 });
 
 // -------------------------------------------------------------------------------------------
 
 router.post('/insert-recipe', async (req, res) => {
-    const {recipeID, cName, timeEstimate, servings, title, instructions} = req.body;
+    const { recipeID, cName, timeEstimate, servings, title, instructions } = req.body;
     const result = await appService.insertRecipe(recipeID, cName, timeEstimate, servings, title, instructions);
     if (result) {
-        res.json({success: true});
+        res.json({ success: true });
     } else {
-        res.status(500).json({success: false});
+        res.status(500).json({ success: false });
     }
 });
 
 router.post('/update-recipe', async (req, res) => {
-    const {recipeID, cName, timeEstimate, servings, title, instructions, ingredients, ingredientAmounts} = req.body;
+    const { recipeID, cName, timeEstimate, servings, title, instructions, ingredients, ingredientAmounts } = req.body;
     const updateRecipe = await appService.updateRecipe(recipeID, cName, timeEstimate, servings, title, instructions);
 
-    var allSuccess = updateRecipe; 
+    var allSuccess = updateRecipe;
     var errorString = "Recipe updated: " + updateRecipe.toString();
 
     if (updateRecipe) {
@@ -61,19 +61,19 @@ router.post('/update-recipe', async (req, res) => {
         }
     }
     if (allSuccess) {
-        res.json({success: true});
+        res.json({ success: true });
     } else {
-        res.status(500).json({success: false, recipeUpdateSuccess: updateRecipe, error: errorString});
+        res.status(500).json({ success: false, recipeUpdateSuccess: updateRecipe, error: errorString });
     }
 });
 
 router.post('/delete-recipe', async (req, res) => {
-    const {recipeID} = req.body;
+    const { recipeID } = req.body;
     const result = await appService.deleteRecipe(recipeID);
     if (result) {
-        res.json({success: true});
+        res.json({ success: true });
     } else {
-        res.status(500).json({success: false});
+        res.status(500).json({ success: false });
     }
 });
 
@@ -83,7 +83,7 @@ router.post('/select-recipe', async (req, res) => {
     if (Object.hasOwn(result, 'error')) {
         res.status(500).json({ success: false, error: result.error }); // if instead the user is allowed to freely
     } else {                                                          // choose clauses/predicates, error should be 4xx instead of 500
-        res.json({ success: true, recipes: result});
+        res.json({ success: true, recipes: result });
     }
 });
 
@@ -93,17 +93,17 @@ router.post('/project-recipe', async (req, res) => {
     if (Object.hasOwn(result, 'error')) {
         res.status(500).json({ success: false, error: result.error }); // as above comment
     } else {
-        res.json({ success: true, projection: result});
+        res.json({ success: true, projection: result });
     }
 });
 
 router.post('/join-recipe', async (req, res) => {
-    const {recipeID} = req.body;
+    const { recipeID } = req.body;
     const result = await appService.joinRecipe(recipeID);
     if (Object.hasOwn(result, 'error')) {
         res.status(500).json({ success: false, error: result.error }); // as above comment
     } else {
-        res.json({ success: true, join: result});
+        res.json({ success: true, join: result });
     }
 });
 
@@ -112,7 +112,7 @@ router.get('/avgRatingByRecipe', async (req, res) => {
     if (Object.hasOwn(avgs, 'error')) {
         res.status(500).json({ success: false, error: avgs.error }); // as above comment
     } else {
-        res.json({ success: true, avgRatings: avgs});
+        res.json({ success: true, avgRatings: avgs });
     }
 });
 
@@ -146,32 +146,32 @@ router.post('/insert-contains-ing', async (req, res) => {
 });
 
 router.post('/fetch-ingredients', async (req, res) => {
-    const {recID} = req.body;
+    const { recID } = req.body;
     const ing = await appService.fetchIngredients(recID);
     if (Object.hasOwn(ing, 'error')) {
         res.status(500).json({ success: false, error: ing.error });
     } else {
-        res.json({ success: true, ingredients: ing});
+        res.json({ success: true, ingredients: ing });
     }
 });
 
 router.post('/fetch-reviews', async (req, res) => {
-    const {recID} = req.body;
+    const { recID } = req.body;
     const rev = await appService.fetchReviews(recID);
     if (Object.hasOwn(rev, 'error')) {
         res.status(500).json({ success: false, error: rev.error });
     } else {
-        res.json({ success: true, reviews: rev});
+        res.json({ success: true, reviews: rev });
     }
 });
 
 router.post('/fetch-recipes', async (req, res) => {
-    const {userName} = req.body;
+    const { userName } = req.body;
     const rec = await appService.fetchRecipies(userName);
     if (Object.hasOwn(rec, 'error')) {
         res.status(500).json({ success: false, error: rec.error });
     } else {
-        res.json({ success: true, recipes: rec});
+        res.json({ success: true, recipes: rec });
     }
 });
 
@@ -202,9 +202,9 @@ router.post('/submit-recipe', async (req, res) => {
     }
 
     if (allSuccess) {
-        res.json({success: true});
+        res.json({ success: true });
     } else {
-        res.status(500).json({success: false, insertSuccess: insertRecipe, error: errorString});
+        res.status(500).json({ success: false, insertSuccess: insertRecipe, error: errorString });
     }
 });
 
@@ -213,7 +213,7 @@ router.get('/fetch-popular-recipes', async (req, res) => {
     if (Object.hasOwn(rec, 'error')) {
         res.status(500).json({ success: false, error: rec.error });
     } else {
-        res.json({ success: true, recipes: rec});
+        res.json({ success: true, recipes: rec });
     }
 });
 
@@ -222,17 +222,17 @@ router.get('/fetch-top-cuisine', async (req, res) => {
     if (Object.hasOwn(cuis, 'error')) {
         res.status(500).json({ success: false, error: cuis.error });
     } else {
-        res.json({ success: true, cuisine: cuis});
+        res.json({ success: true, cuisine: cuis });
     }
 });
 
 router.post('/fetch-expert-user', async (req, res) => {
-    const {cName} = req.body;
+    const { cName } = req.body;
     const user = await appService.fetchExpertUser(cName);
     if (Object.hasOwn(user, 'error')) {
         res.status(500).json({ success: false, error: user.error });
     } else {
-        res.json({ success: true, users: user});
+        res.json({ success: true, users: user });
     }
 });
 
@@ -299,6 +299,16 @@ router.post('/fetch-user-position', async (req, res) => {
     }
 });
 
+router.post('/fetch-avg-review-for-recipe', async (req, res) => {
+    const { recID } = req.body;
+    const rev = await appService.avgRatingForRecipeId(recID);
+    if (Object.hasOwn(rev, 'error')) {
+        res.status(500).json({ success: false, error: rev.error });
+    } else {
+        res.json({ success: true, average: rev });
+    }
+});
+
 
 // ----------------------------------------------------------
 
@@ -334,17 +344,17 @@ router.post("/update-name-demotable", async (req, res) => {
 router.get('/count-demotable', async (req, res) => {
     const tableCount = await appService.countDemotable();
     if (tableCount >= 0) {
-        res.json({ 
-            success: true,  
+        res.json({
+            success: true,
             count: tableCount
         });
     } else {
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             count: tableCount
         });
     }
-}); 
+});
 
 
 module.exports = router;

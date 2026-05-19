@@ -7,6 +7,8 @@ const includedIngredients = [];
 const ingredientNames = [];
 const ingredientAmounts = [];
 
+let userSavedRecipe = false;
+
 function capitalizeFirstOnly(str) {
   if (!str) return str;
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -25,7 +27,7 @@ function renderIncludedIngredients() {
 
   includedIngredients.forEach((item, index) => {
     const li = document.createElement('li');
-    
+
     const text = document.createElement('span');
     text.textContent = item;
 
@@ -84,14 +86,14 @@ async function obtainRecipe() {
   // const params = new URLSearchParams(window.location.search);
   // const recipeID = Number(params.get('recipeID'));
 
-  if(!Number.isInteger(recipeID) || recipeID < 0) {
+  if (!Number.isInteger(recipeID) || recipeID < 0) {
     alert('Invalid recipe link');
     return;
   }
 
   let response = await fetch('/select-recipe', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       clauses: [],
       predicates: ['RecipeID = ' + recipeID]
@@ -100,7 +102,7 @@ async function obtainRecipe() {
 
   let responseData = await response.json();
 
-  if(!response.ok || !responseData.success || !Array.isArray(responseData.recipes) || responseData.recipes.length === 0) {
+  if (!response.ok || !responseData.success || !Array.isArray(responseData.recipes) || responseData.recipes.length === 0) {
     alert('Recipe not found');
     return;
   }
@@ -110,7 +112,7 @@ async function obtainRecipe() {
   const instructions = row[5];
   cuisineNameGlobal = row[1];
   document.querySelector('.full-recipe h1').textContent = title;
-  document.querySelectorAll('.full-recipe p')[0].textContent = 'Cuisine: ' + row[1] + ', Prep Time: ' + row[2] + ' mins, Servings: ' + row[3]; 
+  document.querySelectorAll('.full-recipe p')[0].textContent = 'Cuisine: ' + row[1] + ', Prep Time: ' + row[2] + ' mins, Servings: ' + row[3];
   document.querySelectorAll('.full-recipe p')[1].textContent = instructions;
 
   document.getElementById('create-recipe-name').value = title;
@@ -118,10 +120,10 @@ async function obtainRecipe() {
   document.getElementById('cuisine-name').value = row[1];
   document.getElementById('time-estimate').value = row[2];
   document.getElementById('num-servings').value = row[3];
-  
+
   response = await fetch('/fetch-ingredients', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       recID: recipeID
     })
@@ -129,7 +131,7 @@ async function obtainRecipe() {
 
   responseData = await response.json();
 
-  if (!response.ok || !responseData.success ) {
+  if (!response.ok || !responseData.success) {
     alert('Failed to load ingredients');
     return;
   }
@@ -155,7 +157,7 @@ async function obtainRecipe() {
 
   response = await fetch('/fetch-reviews', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       recID: recipeID
     })
@@ -163,7 +165,7 @@ async function obtainRecipe() {
 
   responseData = await response.json();
 
-  if (!response.ok || !responseData.success ) {
+  if (!response.ok || !responseData.success) {
     alert('Failed to load reviews');
     return;
   }
@@ -181,7 +183,7 @@ async function obtainRecipe() {
 
     let newResponse = await fetch('/associated-with-org', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userName: reviewerName
       })
@@ -201,7 +203,7 @@ async function obtainRecipe() {
 
     newResponse = await fetch('/fetch-user-position', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userName: reviewerName
       })
@@ -227,17 +229,17 @@ async function obtainRecipe() {
 
     const card = document.createElement('li');
     card.dataset.reviewer = reviewerName;
-    card.innerHTML =  '<h4>' + reviewerName + organizationString + professionString + ', ' + formattedDate + '</h4>' +
-                      '<p>Rating: ' + rating + '/5</p>' +
-                      '<p>Comment: ' + comment + '</p>'
+    card.innerHTML = '<h4>' + reviewerName + organizationString + professionString + ', ' + formattedDate + '</h4>' +
+      '<p>Rating: ' + rating + '/5</p>' +
+      '<p>Comment: ' + comment + '</p>'
     container.appendChild(card);
   }
 
-  response = await fetch('/avgRatingByRecipe', {method: 'GET'});
+  response = await fetch('/avgRatingByRecipe', { method: 'GET' });
 
   responseData = await response.json();
 
-  if (!response.ok || !responseData.success ) {
+  if (!response.ok || !responseData.success) {
     alert('Failed to load average rating');
     return;
   }
@@ -263,7 +265,7 @@ async function submitReview() {
   event.preventDefault();
 
   console.log('submitting review');
-  
+
   if (sessionStorage.getItem('userLoggedIn') != 'true') {
     alert('You must be logged in to submit a review');
     return;
@@ -287,7 +289,7 @@ async function submitReview() {
 
   response = await fetch('/insert-review', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       reviewID: reviewID,
       userName: sessionStorage.getItem('username'),
@@ -300,7 +302,7 @@ async function submitReview() {
 
   const responseData = await response.json();
 
-  if (!response.ok || !responseData.success ) {
+  if (!response.ok || !responseData.success) {
     alert('Failed to submit review');
     return;
   } else {
@@ -317,7 +319,7 @@ async function deleteRecipe() {
 
   response = await fetch('/delete-recipe', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       recipeID: recipeID,
     })
@@ -325,7 +327,7 @@ async function deleteRecipe() {
 
   const responseData = await response.json();
 
-  if (!response.ok || !responseData.success ) {
+  if (!response.ok || !responseData.success) {
     alert('Failed to delete recipe');
     return;
   } else {
@@ -344,7 +346,7 @@ async function showUpdateRecipe() {
 async function submitRecipe() {
   event.preventDefault();
 
-  if(sessionStorage.getItem('userLoggedIn') != 'true') {
+  if (sessionStorage.getItem('userLoggedIn') != 'true') {
     alert('You must be logged in to submit a recipe');
     return;
   }
@@ -425,7 +427,7 @@ async function highlightExperts() {
   });
 
   const responseData = await response.json();
-  
+
   if (!responseData.success) {
     alert('Failed to get expert users');
     return;
@@ -447,25 +449,52 @@ async function highlightExperts() {
 }
 
 async function saveRecipe() {
-  const response = await fetch('/insert-saves', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      userName: sessionStorage.getItem('username'),
-      recID: recipeID,
-    })
-  });
+  if (userSavedRecipe === false) {
+    const response = await fetch('/insert-saves', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userName: sessionStorage.getItem('username'),
+        recID: recipeID,
+      })
+    });
 
-  const responseData = await response.json();
-  
-  if (!responseData.success) {
-    alert('Failed to save recipe');
-    return;
+    const responseData = await response.json();
+
+    if (!responseData.success) {
+      alert('Failed to save recipe');
+      return;
+    } else {
+      alert('Successfully saved recipe');
+      document.getElementById('save-recipe-btn').textContent = `Unsave`;
+      userSavedRecipe = true;
+    }
   } else {
-    alert('Successfully saved recipe');
+    const response = await fetch('/delete-saves', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userName: sessionStorage.getItem('username'),
+        recID: recipeID,
+      })
+    });
+
+    const responseData = await response.json();
+
+    if (!responseData.success) {
+      alert('Failed to remove saved recipe');
+      return;
+    } else {
+      alert('Successfully removed saved recipe');
+      document.getElementById('save-recipe-btn').textContent = `Save`;
+      userSavedRecipe = false;
+    }
   }
+
 }
 
 async function initRecipePage() {
@@ -488,20 +517,41 @@ async function initRecipePage() {
     });
 
     const responseData = await response.json();
-  
-    if (responseData.result === true){
+
+    if (responseData.result === true) {
       document.getElementById('delete-recipe-btn').hidden = false;
       document.getElementById('update-recipe-btn').hidden = false;
     } else {
-      document.getElementById('save-recipe-btn').hidden = false;
+      saveRecipeBtn = document.getElementById('save-recipe-btn');
+      saveRecipeBtn.hidden = false;
+
+      const response = await fetch('/join-saved-recipes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userName: sessionStorage.getItem('username')
+        })
+      });
+
+      const responseData = await response.json();
+
+      console.log(responseData.savedRecipes.map(item => item[0]));
+      console.log(recipeID);
+
+      if (responseData.savedRecipes.map(item => item[0]).includes(recipeID)) {
+        saveRecipeBtn.textContent = `Unsave`;
+        userSavedRecipe = true;
+      }
     }
   }
 
   obtainRecipe();
 }
 
-if(document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initRecipePage); 
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initRecipePage);
 } else {
   initRecipePage();
 }

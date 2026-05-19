@@ -21,7 +21,7 @@ async function initializeConnectionPool() {
     try {
         await oracledb.createPool(dbConfig);
         console.log('Connection pool started');
-        
+
         // UNCOMMENT TO TEST
         // await testInsertRecipe();
         // await testUpdateRecipe();
@@ -266,7 +266,7 @@ async function initiateDemotable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE DEMOTABLE`);
-        } catch(err) {
+        } catch (err) {
             console.log('Table might not exist, proceeding to create...');
         }
 
@@ -413,7 +413,7 @@ async function selectRecipe(clauses, predicates, contains, notContains) {
                 let notContClause = '(RecipeID NOT IN (SELECT RecID FROM ContainsIng WHERE IName IN (' + notContainsBind.join(',') + ')))';
                 sql += ((predicates && predicates.length > 0) || (contains && contains.length > 0)) ? ' AND ' + notContClause : ' WHERE ' + notContClause;
             }
-            
+
             if (notContains && notContains.length > 0 && contains && contains.length > 0) {
                 result = await connection.execute(sql, [...contains, ...notContains]);
             } else if (contains && contains.length > 0) {
@@ -541,6 +541,29 @@ async function avgRatingByRecipe() {
         });
     } catch (err) {
         console.error('avgRatingByRecipe error:', err);
+        return { error: 'invalid query' };
+    }
+}
+
+// Get average rating for a certain recipeID
+async function avgRatingForRecipeId(recipeId) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `SELECT R.RecipeID,
+                        R.Title,
+                        AVG(REV.Rating) AS AvgRating
+                 FROM Recipe R
+                 INNER JOIN Review REV ON R.RecipeID = REV.RecID
+                 WHERE R.RecipeID = :recipeId
+                 GROUP BY R.RecipeID, R.Title
+                 ORDER BY R.RecipeID`,
+                { recipeId }
+            );
+            return result.rows || [];
+        });
+    } catch (err) {
+        console.error('avgRatingForRecipeId error:', err);
         return { error: 'invalid query' };
     }
 }
@@ -914,9 +937,9 @@ async function fetchPositionForUser(userName) {
 module.exports = {
     testOracleConnection,
     fetchDemotableFromDb,
-    initiateDemotable, 
-    insertDemotable, 
-    updateNameDemotable, 
+    initiateDemotable,
+    insertDemotable,
+    updateNameDemotable,
     countDemotable,
     insertRecipe,
     insertCreates,
@@ -942,5 +965,6 @@ module.exports = {
     fetchAssociatedOrgsForUser,
     fetchPositionForUser,
     fetchExpertUser,
-    verifyUser
+    verifyUser,
+    avgRatingForRecipeId
 };

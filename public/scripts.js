@@ -35,7 +35,7 @@ function renderIncludedConditions() {
 
   fullSearchConditions.forEach((item, index) => {
     const li = document.createElement('li');
-    
+
     const text = document.createElement('span');
     text.textContent = item;
 
@@ -57,7 +57,7 @@ function renderIncludedFilters() {
 
   fullSearchFilters.forEach((item, index) => {
     const li = document.createElement('li');
-    
+
     const text = document.createElement('span');
     text.textContent = item;
 
@@ -87,8 +87,30 @@ function renderRecipeCards(containerId, recipes, recipeIdIndex) {
     card.style.textDecoration = 'underline';
     card.style.color = '#007bff';
     card.style.textDecorationColor = '#007bff';
-    card.innerHTML =  '<p>- ' + title + '</p>';
-    card.addEventListener('click', function() {
+    card.innerHTML = '<p>- ' + title + '</p>';
+    card.addEventListener('click', function () {
+      window.location.href = 'recipe.html?recipeID=' + recipeId;
+    });
+    container.appendChild(card);
+  }
+}
+
+function renderRecipeCardsWithRating(containerId, recipes) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  for (const recipe of recipes) {
+    const recipeId = recipe[0];
+    const title = recipe[4]; // hacky solution to inconsistent indices of recipe attributes
+    const card = document.createElement('div');
+
+    card.className = 'recommended-item';
+    card.style.cursor = 'pointer';
+    card.style.textDecoration = 'underline';
+    card.style.color = '#007bff';
+    card.style.textDecorationColor = '#007bff';
+    card.innerHTML = '<p>- ' + title + ', ' + recipe[6] + '</p>';
+    card.addEventListener('click', function () {
       window.location.href = 'recipe.html?recipeID=' + recipeId;
     });
     container.appendChild(card);
@@ -106,7 +128,7 @@ function renderIncludedIngredients() {
 
   includedIngredients.forEach((item, index) => {
     const li = document.createElement('li');
-    
+
     const text = document.createElement('span');
     text.textContent = item.label;
 
@@ -128,7 +150,7 @@ function capitalizeFirstOnly(str) {
 }
 
 async function refreshLists() {
-  let response = await fetch('/fetch-popular-recipes', {method: 'GET'});
+  let response = await fetch('/fetch-popular-recipes', { method: 'GET' });
 
   let responseData = await response.json();
 
@@ -144,7 +166,7 @@ async function refreshLists() {
 
     response = await fetch('/fetch-recipes', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userName: sessionStorage.getItem('username')
       })
@@ -152,7 +174,7 @@ async function refreshLists() {
 
     responseData = await response.json();
 
-    if (!response.ok || !responseData.success ) {
+    if (!response.ok || !responseData.success) {
       alert('Failed to load created recipes for ' + sessionStorage.getItem('username'));
       return;
     }
@@ -166,7 +188,7 @@ async function refreshLists() {
 
     response = await fetch('/join-saved-recipes', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userName: sessionStorage.getItem('username')
       })
@@ -174,7 +196,7 @@ async function refreshLists() {
 
     responseData = await response.json();
 
-    if (!response.ok || !responseData.success ) {
+    if (!response.ok || !responseData.success) {
       alert('Failed to load saved recipes for ' + sessionStorage.getItem('username'));
       return;
     }
@@ -184,14 +206,14 @@ async function refreshLists() {
       return;
     }
 
-    renderRecipeCards('saved', responseData.savedRecipes, 0); 
+    renderRecipeCards('saved', responseData.savedRecipes, 0);
   }
 }
 
 async function submitRecipe() {
   event.preventDefault();
 
-  if(sessionStorage.getItem('userLoggedIn') != 'true') {
+  if (sessionStorage.getItem('userLoggedIn') != 'true') {
     alert('You must be logged in to submit a recipe');
     return;
   }
@@ -290,13 +312,14 @@ async function searchRecipes() {
 
   const searchQuery = document.getElementById('search-query').value.trim();
   const onlyTopCuisine = document.querySelector('input[name="only-top-cuisine"]');
-  
+  const sortedResults = document.querySelector('input[name="sorted-results-box"]');
+
   const predicates = [`UPPER(Title) LIKE UPPER('%${searchQuery}%')`];
   const clauses = [];
 
   if (onlyTopCuisine.checked) {
-    let response = await fetch('/fetch-top-cuisine', {method: 'GET'});
-    
+    let response = await fetch('/fetch-top-cuisine', { method: 'GET' });
+
     let responseData = await response.json();
 
     if (!response.ok || !responseData.success) {
@@ -311,7 +334,7 @@ async function searchRecipes() {
     predicates.push(...addedPredicates);
   }
 
-  
+
   response = await fetch('/select-recipe', {
     method: 'POST',
     headers: {
@@ -336,8 +359,43 @@ async function searchRecipes() {
     alert('No recipes with the given search conditions could be found');
     return;
   }
-   
-  renderRecipeCards('search-results', responseData.recipes, 0); 
+
+
+
+  if (sortedResults.checked) {
+    const recipesWithAverage = [];
+
+    for (const recipe of responseData.recipes) {
+      const response = await fetch('/fetch-avg-review-for-recipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recID: recipe[0] })
+      });
+
+      const responseDataAverage = await response.json();
+      const avgRating = responseDataAverage.average?.[0]?.[2] ?? null;
+
+      recipesWithAverage.push([
+        recipe[0],
+        recipe[1],
+        recipe[2],
+        recipe[3],
+        recipe[4],
+        recipe[5],
+        avgRating.toFixed(2)
+      ]);
+    }
+    recipesWithAverage.sort((a, b) => (b[6] ?? 0) - (a[6] ?? 0));
+
+    console.log(recipesWithAverage);
+    // console.log(responseData.recipes);
+
+    renderRecipeCardsWithRating('search-results', recipesWithAverage);
+  } else {
+    renderRecipeCards('search-results', responseData.recipes, 0);
+  }
+
+
 }
 
 async function tryLogin() {
@@ -393,7 +451,7 @@ async function addIngredient() {
 
   const label = amount ? '- ' + amount + ' of ' + ingredientName : ingredientName;
 
-  includedIngredients.push({label: label, name: capitalizeFirstOnly(ingredientName), amount: amount});
+  includedIngredients.push({ label: label, name: capitalizeFirstOnly(ingredientName), amount: amount });
 
   renderIncludedIngredients();
 
@@ -414,10 +472,10 @@ async function addClausePredicate() {
   const clause = document.getElementById("search-condition-clause").value;
   const attribute = document.getElementById("search-condition-attribute").value;
   const op = document.getElementById("search-condition-op").value;
-  
+
   const isNumber = valueAsNumber !== "" && !Number.isNaN(valueAsNumber);
   const isString = valueAsNumber !== "" && Number.isNaN(valueAsNumber);
-  
+
   if (isNumber) {
     addedPredicates.push(`${attribute} ${op} ${value}`);
   } else if (isString) {
@@ -445,7 +503,7 @@ async function addFilter() {
   const notContains = document.getElementById("ingredient-filter").value === "DNCont";
 
   const isString = (typeof name === 'string' && name.length > 0);
-  
+
   if (isString) {
     name = capitalizeFirstOnly(name);
     if (contains) {
@@ -480,7 +538,7 @@ window.onload = function () {
   refreshLists();
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const isLoggedIn = sessionStorage.getItem('userLoggedIn') === 'true';
 
   if (isLoggedIn) {
